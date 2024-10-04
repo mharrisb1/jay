@@ -3,7 +3,7 @@
 Collection of utilities for working with JSON
 
 > [!WARNING]
-> WIP adn probably buggy
+> WIP and probably buggy
 
 ## Help
 
