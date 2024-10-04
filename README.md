@@ -1,4 +1,6 @@
-# 🐦 jay - JSON utils
+# 🐦 Jay - JSON utils
+
+Collection of utilities for working with JSON
 
 ## Help
 
