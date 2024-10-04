@@ -11,34 +11,38 @@ void pprint(const JsonNode *node, int indent) {
   if (!node)
     return;
 
-  for (int i = 0; i < indent; i++)
-    printf("  ");
-
   switch (node->type) {
     case JSON_NULL:
-      printf(COLOR_YELLOW_BOLD "null" COLOR_RESET "\n");
+      printf(COLOR_YELLOW_BOLD "null" COLOR_RESET);
       break;
     case JSON_BOOL:
-      printf(COLOR_YELLOW_BOLD "%s" COLOR_RESET "\n",
+      printf(COLOR_YELLOW_BOLD "%s" COLOR_RESET,
              node->data.bool_value ? "true" : "false");
       break;
     case JSON_NUMBER:
-      printf(COLOR_YELLOW_BOLD "%lf" COLOR_RESET "\n", node->data.number_value);
+      printf(COLOR_YELLOW_BOLD "%lf" COLOR_RESET, node->data.number_value);
       break;
     case JSON_STRING:
-      printf(COLOR_MAGENTA_BOLD "\"%s\"" COLOR_RESET "\n",
-             node->data.string_value);
+      printf(COLOR_MAGENTA_BOLD "\"%s\"" COLOR_RESET, node->data.string_value);
       break;
     case JSON_ARRAY: {
       printf("[\n");
       JsonList *current = node->data.array_elements;
       while (current) {
+        for (int i = 0; i < indent + 1; i++)
+          printf("  ");
+
         pprint(current->node, indent + 1);
+
+        if (current->next)
+          printf(",");
+        printf("\n");
+
         current = current->next;
       }
       for (int i = 0; i < indent; i++)
         printf("  ");
-      printf("]\n");
+      printf("]");
       break;
     }
     case JSON_OBJECT: {
@@ -49,42 +53,20 @@ void pprint(const JsonNode *node, int indent) {
         for (int i = 0; i < indent + 1; i++)
           printf("  ");
         printf(COLOR_BLUE "\"%s\"" COLOR_RESET ": ", pair->key);
-        switch (pair->value->type) {
-          case JSON_NULL:
-            printf(COLOR_YELLOW_BOLD "null" COLOR_RESET "\n");
-            break;
-          case JSON_BOOL:
-            printf(COLOR_YELLOW_BOLD "%s" COLOR_RESET "\n",
-                   pair->value->data.bool_value ? "true" : "false");
-            break;
-          case JSON_NUMBER:
-            printf(COLOR_YELLOW_BOLD "%lf" COLOR_RESET "\n",
-                   pair->value->data.number_value);
-            break;
-          case JSON_STRING:
-            printf(COLOR_MAGENTA_BOLD "\"%s\"" COLOR_RESET "\n",
-                   pair->value->data.string_value);
-            break;
-          case JSON_ARRAY:
-            printf("[\n");
-            pprint(pair->value, indent + 2);
-            for (int i = 0; i < indent + 1; i++)
-              printf("  ");
-            printf("]\n");
-            break;
-          case JSON_OBJECT:
-            printf("{\n");
-            pprint(pair->value, indent + 2);
-            for (int i = 0; i < indent + 1; i++)
-              printf("  ");
-            printf("}\n");
-            break;
-        }
+        pprint(pair->value, indent + 1);
+
+        if (current->next)
+          printf(",");
+        printf("\n");
+
         current = current->next;
       }
       for (int i = 0; i < indent; i++)
         printf("  ");
-      printf("}\n");
+      printf("}");
+      if (indent == 0) {
+        printf("\n");
+      }
       break;
     }
     default:
