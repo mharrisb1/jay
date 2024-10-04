@@ -1,2 +1,4 @@
 -Iinclude
 -Ilib
+-Wall
+-Wextra
