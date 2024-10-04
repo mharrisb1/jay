@@ -9,7 +9,9 @@
 #include "parser.h"
 #include "pprint.h"
 
-#define BUFFER_SIZE 4096
+#define MAX_BUFFER_SIZE 4096
+
+LogLevel current_log_level;
 
 typedef enum { COMMAND_PP } Command;
 
@@ -46,6 +48,7 @@ char *read_stdin(size_t buffer_size) {
 int main(int argc, char **argv) {
   int opt;
   set_log_level(LOG_LEVEL_WARNING);
+
   const struct option longopts[] = {
       {"verbose", no_argument, 0, 'v'},
       {"quiet", no_argument, 0, 'q'},
@@ -55,12 +58,12 @@ int main(int argc, char **argv) {
   while ((opt = getopt_long(argc, argv, "vqh", longopts, NULL)) != -1) {
     switch (opt) {
       case 'v':
-        if (current_log_level > LOG_LEVEL_TRACE) {
+        if (get_log_level() > LOG_LEVEL_TRACE) {
           set_log_level(current_log_level - 1);
         }
         break;
       case 'q':
-        if (current_log_level < LOG_LEVEL_ERROR) {
+        if (get_log_level() < LOG_LEVEL_ERROR) {
           set_log_level(current_log_level + 1);
         }
         break;
@@ -94,7 +97,7 @@ int main(int argc, char **argv) {
     }
   }
 
-  char     *json_input = read_stdin(BUFFER_SIZE);
+  char     *json_input = read_stdin(MAX_BUFFER_SIZE);
   JsonNode *root       = parse_json(json_input);
 
   switch (command) {
