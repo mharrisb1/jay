@@ -3,9 +3,12 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <log.h/log.h>
+
 #include "lexer.h"
 
 void lexer_init(Lexer *lexer, const char *input) {
+  debug("Initializing lexer");
   lexer->input = input;
   lexer->pos   = 0;
   lexer->lenth = strlen(input);
