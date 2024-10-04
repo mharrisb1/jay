@@ -6,9 +6,42 @@
 #include <log.h/log.h>
 
 #include "json.h"
+#include "parser.h"
 #include "pprint.h"
 
+#define BUFFER_SIZE 4096
+
 typedef enum { COMMAND_PP } Command;
+
+char *read_stdin(size_t buffer_size) {
+  size_t position = 0;
+  char  *buffer   = malloc(buffer_size);
+  if (!buffer) {
+    fprintf(stderr, "Error: Unable to allocate memory for input buffer.\n");
+    exit(EXIT_FAILURE);
+  }
+
+  int c;
+  while ((c = fgetc(stdin)) != EOF) {
+    // Resize buffer if necessary
+    if (position + 1 >= buffer_size) { // +1 for null terminator
+      buffer_size *= 2;
+      char *new_buffer = realloc(buffer, buffer_size);
+      if (!new_buffer) {
+        free(buffer);
+        fprintf(stderr,
+                "Error: Unable to reallocate memory for input buffer.\n");
+        exit(EXIT_FAILURE);
+      }
+      buffer = new_buffer;
+    }
+    buffer[position++] = (char)c;
+  }
+
+  buffer[position] = '\0';
+
+  return buffer;
+}
 
 int main(int argc, char **argv) {
   int opt;
@@ -51,28 +84,6 @@ int main(int argc, char **argv) {
     }
   }
 
-  // TODO: remove
-  JsonNode *root = json_create_object();
-
-  json_object_add(root, "name", json_create_string("John Doe"));
-
-  json_object_add(root, "age", json_create_number(30));
-
-  json_object_add(root, "ethnicity", json_create_null());
-
-  json_object_add(root, "is_student", json_create_bool(0));
-
-  JsonNode *courses = json_create_array();
-  json_array_add(courses, json_create_string("Math"));
-  json_array_add(courses, json_create_string("Science"));
-  json_object_add(root, "courses", courses);
-
-  JsonNode *address = json_create_object();
-  json_object_add(address, "street", json_create_string("123 Main St"));
-  json_object_add(address, "city", json_create_string("Anytown"));
-  json_object_add(root, "address", address);
-  // TODO: remove
-
   Command command = COMMAND_PP;
 
   for (int i = optind; i < argc; i++) {
@@ -82,6 +93,9 @@ int main(int argc, char **argv) {
       exit(EXIT_FAILURE);
     }
   }
+
+  char     *json_input = read_stdin(BUFFER_SIZE);
+  JsonNode *root       = parse_json(json_input);
 
   switch (command) {
     case COMMAND_PP:
