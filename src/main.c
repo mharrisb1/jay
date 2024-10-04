@@ -1,9 +1,9 @@
 #include <getopt.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include <log.h/log.h>
-#include <string.h>
 
 #include "json.h"
 #include "pprint.h"
