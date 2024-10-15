@@ -10,7 +10,7 @@ Collection of utilities for working with JSON
 ```sh
 🐦 Jay - JSON utils
 
-Usage: build/app [OPTIONS] [COMMAND]
+Usage: jay [OPTIONS] [COMMAND]
 
 Commands:
   pp		Pretty print (default)
