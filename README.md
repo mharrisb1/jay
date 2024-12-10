@@ -24,7 +24,7 @@ Options:
 
 ### Pretty print
 
-Pretty pring a JSON object
+Pretty print a JSON object
 
 ```sh
 echo '{"name": "John Doe", "age": 30.0, "ethnicity": null, "is_student": false, "courses": ["Math", "Science"], "address": {"street": "123 Main St", "city": "Anytown"}}' | jay pp
